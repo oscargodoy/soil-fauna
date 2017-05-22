@@ -102,7 +102,7 @@ env.fit <- envfit(MDS_res, env[,c(1,2,5,12)], perm = 999)
 env.fit 
 
 #Plot the graphs
-pdf(file="NMDS_soil_fauna.pdf", width=6, height=3) 
+pdf(file="NMDS_soil_fauna.pdf", width=10, height=6) 
 par(mfcol=c(1,2), omi=c(0.1, 0.1, 0.1, 0.1), mar=c(4, 4, 1, 1), ps=8) 
 #first plot related to soil variables
 plot(MDS_res$points, t="n",xlab="NMDS1", ylab="NMDS2", xlim=c(-1, 1)) 
