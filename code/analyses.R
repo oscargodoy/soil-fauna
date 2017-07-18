@@ -6,6 +6,7 @@
 library(vegan)
 library(corrgram) # for correlograms
 
+# NMDS----
 # Load the data
 d <- read.csv("data/original_database_r.csv", header=T, sep=",")
 
@@ -45,12 +46,12 @@ env <- env[,c(-13, -17)]
 res2<-bioenv(sp, env=env)
 res2
 
-source('bio.env.R')
+source('code/bio.env.R')
 res2.2<-bio.env(sp, env, fix.dist.method="bray", var.dist.method="euclidean", scale.fix=FALSE, scale.var=TRUE) 
 res2.2
 
 #lets plot these graphs 
-source('bv.step.R')
+source('code/bv.step.R')
 
 #This analysis serve to know which gropus are best exaplining patterns
 res.bv.step.biobio <- bv.step(sp, sp,  
@@ -90,7 +91,7 @@ env.fit <- envfit(MDS_res, env[,c(1,5,15)], perm = 999)
 env.fit 
 
 #Plot the graphs
-pdf(file="NMDS_soil_fauna.pdf", width=10, height=6) 
+pdf(file="results/NMDS_soil_fauna_AppendixS1.pdf", width=10, height=6) 
 par(mfcol=c(1,2), omi=c(0.1, 0.1, 0.1, 0.1), mar=c(4, 4, 1, 1), ps=8) 
 #first plot related to soil variables
 plot(MDS_res$points, t="n",xlab="NMDS1", ylab="NMDS2", xlim=c(-1, 1)) 
@@ -129,6 +130,7 @@ env <- env[,c(-12, -13, -17)]
 
 #light plot of samples 21 and 22 have much more light that the others. Therefore que arcsin sqrt transform them to avoid overdispersion in variance
 env[,1]<-asin(sqrt(env[,1]/100))
+##CHECK HOW TO TRANSFORM THE DATA TO AVOID OVERDISPERSION!!!
 
 
 #obtain species (sp) separated from environmental variables (env)
@@ -141,13 +143,13 @@ sp2 <-wisconsin(sp2)
 
 ###Do the analyses again grouping insects by groups directly linked to litter. !Eliminate those groups that do not play a direct role. 
 
-source('bio.env.R')
+source('code/bio.env.R')
 res2.3<-bio.env(sp2, env, fix.dist.method="bray", var.dist.method="euclidean", scale.fix=FALSE, scale.var=TRUE) 
 res2.3
 #Second analyses says that litter_decomposition 3 and litter_biomass are significant but they are highly correlated (eliminate litter_mass)
 
 #This analysis serve to know which gropus are best exaplining patterns
-source('bv.step.R')
+source('code/bv.step.R')
 res.bv.step.biobio <- bv.step(sp2, sp2,  
                               fix.dist.method="bray", var.dist.method="bray", 
                               scale.fix=FALSE, scale.var=FALSE,  
@@ -184,19 +186,20 @@ env.fit <- envfit(MDS_res, env[,1], perm = 999)
 env.fit 
 
 #Plot the graphs
-pdf(file="NMDS_soil_fauna_specific_groups.pdf", width=10, height=6) 
+pdf(file="results/NMDS_soil_fauna_specific_groups_Fig1.pdf", width=10, height=6) 
 par(mfcol=c(1,2), omi=c(0.1, 0.1, 0.1, 0.1), mar=c(4, 4, 1, 1), ps=8) 
 #first plot related to soil variables
 plot(MDS_res$points, t="n",xlab="NMDS1", ylab="NMDS2", xlim=c(-1, 1)) 
 plot(env.fit, col="gray10", cex=1.2, font=4) 
 text(MDS_res$points, as.character(1:length(MDS_res$points[,1])), cex=1.2, col="red") 
-text(min(MDS_res$points[,1]), max(MDS_res$points[,2]), paste("Stress =",round(MDS_res$stress, 2)), pos=4, font=3, col="gray30") 
+text(min(MDS_res$points[,1]), max(MDS_res$points[,2]), paste("Stress =",round(MDS_res$stress, 2)), pos=2, font=3, col="gray30") 
+text(x=0.05, y=-0.8, labels = "light_plot", col="gray10", cex=1.2, font=4)
 
 #second plot related to soil fauna groups
 plot(MDS_res$points, t="n",xlab="NMDS1", ylab="NMDS2", xlim=c(-1, 1)) 
 plot(bio.fit, col="gray10", cex=1.2, font=4) 
 text(MDS_res$points, as.character(1:length(MDS_res$points[,1])), cex=1.2, col="red") 
-text(min(MDS_res$points[,1]), max(MDS_res$points[,2]), paste("Stress =",round(MDS_res$stress, 2)), pos=4, font=3, col="gray30") 
+text(min(MDS_res$points[,1]), max(MDS_res$points[,2]), paste("Stress =",round(MDS_res$stress, 2)), pos=2, font=3, col="gray30") 
 dev.off()
 
 
@@ -254,13 +257,13 @@ predators <- predators[-5, ] # to remove an outlier
 
 ###Do the analyses again grouping insects by groups directly linked to litter. !Eliminate those groups that do not play a direct role. 
 
-source('bio.env.R')
+source('code/bio.env.R')
 res2.4<-bio.env(decomp, env, fix.dist.method="bray", var.dist.method="euclidean", scale.fix=FALSE, scale.var=TRUE) 
 res2.4
 #Second analyses says that litter_decomposition 3 and litter_biomass are significant but they are highly correlated (eliminate litter_mass)
 
 #This analysis serve to know which gropus are best exaplining patterns
-source('bv.step.R')
+source('code/bv.step.R')
 res.bv.step.biobio <- bv.step(decomp, decomp,  
                               fix.dist.method="bray", var.dist.method="bray", 
                               scale.fix=FALSE, scale.var=FALSE,  
@@ -299,31 +302,41 @@ env.fit <- envfit(MDS_res, env[,c(1,5,8)], perm = 999)
 env.fit 
 
 #Plot the graphs
-pdf(file="NMDS_soil_fauna_decomposers.pdf", width=10, height=6) 
+pdf(file="results/NMDS_soil_fauna_decomposers_Fig2.pdf", width=10, height=6) 
 par(mfcol=c(1,2), omi=c(0.1, 0.1, 0.1, 0.1), mar=c(4, 4, 1, 1), ps=8) 
 #first plot related to soil variables
-plot(MDS_res$points, t="n",xlab="NMDS1", ylab="NMDS2", xlim=c(-1, 1)) 
+plot(MDS_res$points, t="n",xlab="NMDS1", ylab="NMDS2", xlim=c(-1, 1), ylim = c(-1,0.5)) 
 plot(env.fit, col="gray10", cex=1.2, font=4) 
 text(MDS_res$points, as.character(1:length(MDS_res$points[,1])), cex=1.2, col="red") 
 text(min(MDS_res$points[,1]), max(MDS_res$points[,2]), paste("Stress =",round(MDS_res$stress, 2)), pos=2, font=3, col="gray30") 
 
 #second plot related to soil fauna groups
-plot(MDS_res$points, t="n",xlab="NMDS1", ylab="NMDS2", xlim=c(-1, 1)) 
+plot(MDS_res$points, t="n",xlab="NMDS1", ylab="NMDS2", xlim=c(-1, 1), ylim = c(-1,0.5)) 
 plot(bio.fit, col="gray10", cex=1.2, font=4) 
 text(MDS_res$points, as.character(1:length(MDS_res$points[,1])), cex=1.2, col="red") 
 text(min(MDS_res$points[,1]), max(MDS_res$points[,2]), paste("Stress =",round(MDS_res$stress, 2)), pos=2, font=3, col="gray30") 
 dev.off()
 
 
+###This is for predators, we are going to include abundance of decomposers as a explanatory variable.
+
+decomposers <- sp2[, c(1,6:13)]
+sum_decomp <- apply(decomposers, 1, FUN="sum")
+
+##remove outlier #5 
+sum_decomp <-sum_decomp[-5]
+
+env2<-cbind(env, sum_decomp)
+
 ###Do the analyses again grouping insects by groups directly linked to litter. !Eliminate those groups that do not play a direct role. 
 
-source('bio.env.R')
-res2.5<-bio.env(predators, env, fix.dist.method="bray", var.dist.method="euclidean", scale.fix=FALSE, scale.var=TRUE) 
+source('code/bio.env.R')
+res2.5<-bio.env(predators, env2, fix.dist.method="bray", var.dist.method="euclidean", scale.fix=FALSE, scale.var=TRUE) 
 res2.5
 #Second analyses says that litter_decomposition 3 and litter_biomass are significant but they are highly correlated (eliminate litter_mass)
 
 #This analysis serve to know which gropus are best exaplining patterns
-source('bv.step.R')
+source('code/bv.step.R')
 res.bv.step.biobio <- bv.step(predators, predators,  
                               fix.dist.method="bray", var.dist.method="bray", 
                               scale.fix=FALSE, scale.var=FALSE,  
@@ -350,7 +363,7 @@ res.bv.step.biobio2
 
 
 ### Check how these groups relate to the each of the axes of the NDMS
-MDS_res=metaMDS(decomp, distance = "bray", k = 2, trymax = 50) 
+MDS_res=metaMDS(predators, distance = "bray", k = 2, trymax = 50) 
 bio.keep <- as.numeric(unlist(strsplit(res.bv.step.biobio2$order.by.best$var.incl[1], ","))) 
 bio.fit <- envfit(MDS_res, decomp[,bio.keep], perm = 999) 
 bio.fit 
@@ -358,25 +371,43 @@ bio.fit
 
 
 #Do the same with the environmental variables, 
-env.fit <- envfit(MDS_res, env[,c(1, 6, 11)], perm = 999) 
+env.fit <- envfit(MDS_res, env2[,c(1, 6, 11)], perm = 999)  
 env.fit 
 
 #Plot the graphs
-pdf(file="NMDS_soil_fauna_predators.pdf", width=10, height=6) 
+pdf(file="results/NMDS_soil_fauna_predators_Fig3.pdf", width=10, height=6) 
 par(mfcol=c(1,2), omi=c(0.1, 0.1, 0.1, 0.1), mar=c(4, 4, 1, 1), ps=8) 
 #first plot related to soil variables
-plot(MDS_res$points, t="n",xlab="NMDS1", ylab="NMDS2", xlim=c(-1, 1)) 
+plot(MDS_res$points, t="n",xlab="NMDS1", ylab="NMDS2", xlim=c(-1.7, 1.7)) 
 plot(env.fit, col="gray10", cex=1.2, font=4) 
 text(MDS_res$points, as.character(1:length(MDS_res$points[,1])), cex=1.2, col="red") 
-text(min(MDS_res$points[,1]), max(MDS_res$points[,2]), paste("Stress =",round(MDS_res$stress, 2)), pos=2, font=3, col="gray30") 
+text(min(MDS_res$points[,1]), max(MDS_res$points[,2]), paste("Stress =",round(MDS_res$stress, 2)), pos=1, font=3, col="gray30") 
 
 #second plot related to soil fauna groups
-plot(MDS_res$points, t="n",xlab="NMDS1", ylab="NMDS2", xlim=c(-1, 1)) 
+plot(MDS_res$points, t="n",xlab="NMDS1", ylab="NMDS2", xlim=c(-1.7, 1.7)) 
 plot(bio.fit, col="gray10", cex=1.2, font=4) 
 text(MDS_res$points, as.character(1:length(MDS_res$points[,1])), cex=1.2, col="red") 
-text(min(MDS_res$points[,1]), max(MDS_res$points[,2]), paste("Stress =",round(MDS_res$stress, 2)), pos=2, font=3, col="gray30") 
+text(min(MDS_res$points[,1]), max(MDS_res$points[,2]), paste("Stress =",round(MDS_res$stress, 2)), pos=1, font=3, col="gray30") 
+text(x = 0.2, y = 0.50, labels = "mesostigmata", col="gray10", cex=1.2, font=4)
 dev.off()
 
+
+#SEM analyses---- (Structural equation modelling)
+#to see direct and indirect effect of soil fauna richness and abundances. 
+library(lavaan)
+library(qgraph)
+
+
+
+
+
+
+
+
+
+
+
+##These are glm analyses to check better the broad scale varaition in soil fauna abundance
 
 
 ##Other analyses glm to know the ffect of climatic treatment of abundances of the different groups. 
