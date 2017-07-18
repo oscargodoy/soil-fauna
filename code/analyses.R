@@ -392,13 +392,145 @@ text(x = 0.2, y = 0.50, labels = "mesostigmata", col="gray10", cex=1.2, font=4)
 dev.off()
 
 
-#SEM analyses---- (Structural equation modelling)
+#SEM (Structural equation modelling) analyses---- 
+
 #to see direct and indirect effect of soil fauna richness and abundances. 
 library(lavaan)
 library(qgraph)
 
+#load env and sp2
+#calculate richness
+richness <- diversity(sp2, index = "shannon", MARGIN = 1, base = exp(1))
+richness_decomp <- diversity(decomp, index = "shannon", MARGIN = 1, base = exp(1))
+richness_predators <- diversity(predators, index = "shannon", MARGIN = 1, base = exp(1))
 
+#calculate abundances
+abundance <- apply(sp2, 1, FUN = "sum")
+abundance_decomp <- apply(decomp, 1, FUN = "sum")
+abundance_predators <- apply(predators, 1, FUN = "sum")
+abundance_oribatida <- decomp[,1]
+abundance_poduromorpha <- decomp[,5]
+abundance_miryapoda <- decomp[,8]
+abundance_mesostigmata <-predators[, 1]
 
+semd <-cbind(env, richness, richness_decomp, richness_predators, abundance, abundance_decomp, 
+             abundance_predators, abundance_oribatida, abundance_poduromorpha, abundance_miryapoda, abundance_mesostigmata
+             )
+
+##model fitting says pathogen variance is too high, log transform for solving 
+semd$pathogen[18]<-0.00001
+semd$pathogen <- log(semd$pathogen)
+semd$light_plot <- 100*semd$light_plot
+semd$tree_size <- log(semd$tree_size)
+semd$abundance <- log(semd$abundance)
+semd$abundance_decomp <- log(semd$abundance_decomp)
+
+#To avoid problems when logging
+semd$abundance_predators[5] <- 1
+semd$abundance_predators <- log(semd$abundance_predators)
+semd$abundance_oribatida <- log(semd$abundance_oribatida)
+
+#To avoid problems when logging
+semd$abundance_mesostigmata[5] <- 1
+semd$abundance_mesostigmata <- log(semd$abundance_mesostigmata)
+
+#model 1 describes the best SEM model for decomposers
+model1 <- '
+# regressions
+abundance_decomp ~ litter_moisture
+abundance_decomp ~ light_plot
+litter_moisture ~ light_plot
+litter_moisture ~ litter_depth
+litter_depth ~ tree_size
+
+# residual correlations
+#litter_moisture ~~ decomposition_level_3
+'
+
+fit <- sem(model1, data=semd, fixed.x=FALSE)
+summary(fit, standardized=TRUE)
+
+#model 2 describes the best SEM model for oribatida
+model2 <- '
+# regressions
+abundance_oribatida ~ litter_moisture
+abundance_oribatida ~ light_plot
+litter_moisture ~ light_plot
+litter_moisture ~ litter_depth
+litter_depth ~ tree_size
+
+# residual correlations
+#litter_moisture ~~ decomposition_level_3
+'
+
+fit <- sem(model2, data=semd, fixed.x=FALSE)
+summary(fit, standardized=TRUE)
+
+#model 3 describes the best SEM model for poduromorpha
+model3 <- '
+# regressions
+abundance_poduromorpha ~ litter_moisture
+abundance_poduromorpha ~ light_plot
+litter_moisture ~ light_plot
+litter_moisture ~ litter_depth
+litter_depth ~ tree_size
+
+# residual correlations
+#litter_moisture ~~ decomposition_level_3
+'
+
+fit <- sem(model3, data=semd, fixed.x=FALSE)
+summary(fit, standardized=TRUE)
+
+#model 4 describes the best SEM model for miryapoda
+model4 <- '
+# regressions
+abundance_miryapoda ~ litter_moisture
+abundance_miryapoda ~ light_plot
+litter_moisture ~ light_plot
+litter_moisture ~ litter_depth
+litter_depth ~ tree_size
+
+# residual correlations
+#litter_moisture ~~ decomposition_level_3
+'
+
+fit <- sem(model4, data=semd, fixed.x=FALSE)
+summary(fit, standardized=TRUE)
+
+#model 5 describes the best SEM model for miryapoda
+model5 <- '
+# regressions
+abundance_predators ~ pathogen
+abundance_predators~ abundance_decomp
+abundance_predators ~ light_plot
+abundance_decomp ~ light_plot
+
+#correlation
+
+pathogen~~ tree_size
+'
+
+fit <- sem(model5, data=semd, fixed.x=FALSE)
+summary(fit, standardized=TRUE)
+
+# Model that includes the overall effect of the determinants of abundances among decomposers and predators. 
+
+model6 <- '
+# regressions
+
+abundance_decomp ~ litter_depth
+abundance_decomp ~ light_plot
+abundance_decomp ~ pathogen
+
+litter_depth ~ tree_size
+
+# correlation
+abundance_predators ~~ abundance_decomp
+'
+
+fit <- sem(model6, data=semd, fixed.x=FALSE)
+summary(fit, standardized=TRUE)
 
 
 
