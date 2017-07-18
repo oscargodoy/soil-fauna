@@ -394,6 +394,37 @@ dev.off()
 
 #SEM (Structural equation modelling) analyses---- 
 
+# Load the data
+d <- read.csv("data/original_database_r.csv", header=T, sep=",")
+
+# put all units of litter in biomass for the three main species to have same units in (g) as total litter biomass and wood
+env <- d[,c(7:9,11:26)]
+env[,11:15] <- env[,10]* (env[,11:15]/100)
+
+#Log the biomass data because differ an order of magnitude. 
+env[,c(10:12, 15:19)] <- log(env[,c(10:12, 15:19)])
+env[7,14] <- log(env[7,14])
+
+#For analyses eliminate which plot it is, also OLEA because there is not litter in Marrufo forest. 
+env <- env[,c(-1, -13)]
+
+#Eliminate wood and non-id litter and others
+env <- env[,c(-12, -13, -17)]
+
+#light plot of samples 21 and 22 have much more light that the others. Therefore que arcsin sqrt transform them to avoid overdispersion in variance
+env[,1]<-asin(sqrt(env[,1]/100))
+##CHECK HOW TO TRANSFORM THE DATA TO AVOID OVERDISPERSION!!!
+
+
+#obtain species (sp) separated from environmental variables (env)
+sp <- d[,27:42]
+# focus on those groups that are related to litter decomposition and nutrient cycling processes
+sp2<- sp[,c(1:10, 14:16)]
+
+decomp <- sp2[, c(1,6:13)]
+predators <-sp2[, c(2:5)]
+
+
 #to see direct and indirect effect of soil fauna richness and abundances. 
 library(lavaan)
 library(qgraph)
@@ -531,10 +562,17 @@ abundance_predators ~~ abundance_decomp
 
 fit <- sem(model6, data=semd, fixed.x=FALSE)
 summary(fit, standardized=TRUE)
+#this function is to obtain the fit form the model see http://lavaan.ugent.be/tutorial/tutorial.pdf
+fitMeasures(fit)
 
+##represent the results. 
+library(qgraph)
+library(htmlwidgets)
+library(semPlot)
 
-
-
+#Standarized plot diagram http://sachaepskamp.com/semPlot/examples for examples
+semPaths(fit, what = "std", whatLabels = 'std', style= "ram", layout= "spring", residuals= FALSE, 
+sizeInt =500, edge.label.cex = 1.5, node.width=2, node.height=2, label.cex= 3, curvePivot = TRUE)
 
 
 
