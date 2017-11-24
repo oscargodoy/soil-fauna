@@ -138,6 +138,7 @@ sp <- d[,27:42]
 # focus on those groups that are related to litter decomposition and nutrient cycling processes
 sp2<- sp[,c(1:10, 14:16)]
 
+
 sp2 <- sqrt(sp2)
 sp2 <-wisconsin(sp2)
 
