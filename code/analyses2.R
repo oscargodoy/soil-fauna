@@ -233,7 +233,7 @@ env <- env[-5, ] # to remove an outlier because the humidity level is to high
 #obtain species (sp) separated from environmental variables (env)
 sp <- d[,27:45]
 # focus on those groups that are related to litter decomposition and nutrient cycling processes
-sp2<- sp[,c(1:10, 14:16, 18, 19)]
+sp2<- sp[,c(1:10, 12, 14:15, 18, 19)]
 
 #merge database between decomposers and predators
 decomp <- sp2[, c(1,6:15)]
@@ -287,7 +287,7 @@ res.bv.step.biobio2  <- bv.step(decomp, decomp,
                                 prop.selected.var=0.2, 
                                 num.restarts=50, 
                                 output.best=10, 
-                                var.always.include=c(3,5,8)) # these are the groups that were included in the frist random run of bv.step analyses. 
+                                var.always.include=c(5,7,9)) # these are the groups that were included in the frist random run of bv.step analyses. 
 res.bv.step.biobio2 
 
 
@@ -300,24 +300,24 @@ bio.fit
 
 
 #Do the same with the environmental variables, 
-env.fit <- envfit(MDS_res, env[,c(1,5,14)], perm = 999) 
+env.fit <- envfit(MDS_res, env[,c(1,3, 5,14)], perm = 999) 
 env.fit 
 
 #Plot the graphs
 pdf(file="results/NMDS_soil_fauna_decomposers_Fig2.pdf", width=10, height=6) 
 par(mfcol=c(1,2), omi=c(0.1, 0.1, 0.1, 0.1), mar=c(4, 4, 1, 1), ps=8) 
 #first plot related to soil variables
-plot(MDS_res$points, t="n",xlab="NMDS1", ylab="NMDS2", xlim=c(-1.1, 1.1), ylim = c(-0.6,0.6)) 
-plot(env.fit, col="gray10", cex=1.2, font=4,  labels = c("Light availability", "Tree defoliation", "High decomposed litter")) 
+plot(MDS_res$points, t="n",xlab="NMDS1", ylab="NMDS2", cex.lab=1.5, cex.axis=1.5, xlim=c(-1.1, 1.1), ylim = c(-0.6,0.6)) 
+plot(env.fit, col="gray10", cex=1.2, font=4,  labels = c("Light availability", "Soil respiration", "Tree defoliation", "High decomposed litter")) 
 text(MDS_res$points, as.character(1:length(MDS_res$points[,1])), cex=1.2, col="red") 
-text(min(MDS_res$points[,1]) , max(MDS_res$points[,2]-0.05), paste("Stress =",round(MDS_res$stress, 2)), pos=4, font=3, col="gray30") 
+text(min(MDS_res$points[,1]) , max(MDS_res$points[,2]-0.10), paste("Stress =",round(MDS_res$stress, 2)), pos=1, font=3, cex=1.5, col="gray30") 
 
 #second plot related to soil fauna groups
-plot(MDS_res$points, t="n",xlab="NMDS1", ylab="NMDS2", xlim=c(-1.1, 1.1), ylim = c(-0.6,0.6)) 
-plot(bio.fit, col="gray10", cex=1.2, font=4, labels = c("Oribatida", "Entomobryomorpha", "Poduromorpha",
-                                                        "Myriapoda", "Enchytraeidae")) 
+plot(MDS_res$points, t="n",xlab="NMDS1", ylab="NMDS2", cex.lab=1.5, cex.axis=1.5, xlim=c(-1.1, 1.1), ylim = c(-0.6,0.6)) 
+plot(bio.fit, col="gray10", cex=1.2, font=4, labels = c("Oribatida", "Poduromorpha", "Diptera",
+                                                        "Diplopoda", "Psocoptera")) 
 text(MDS_res$points, as.character(1:length(MDS_res$points[,1])), cex=1.2, col="red") 
-text(min(MDS_res$points[,1]), max(MDS_res$points[,2]-0.05), paste("Stress =",round(MDS_res$stress, 2)), pos=4, font=3, col="gray30") 
+text(min(MDS_res$points[,1]), max(MDS_res$points[,2]-0.10), paste("Stress =",round(MDS_res$stress, 2)), pos=1, font=3, cex=1.5, col="gray30") 
 dev.off()
 
 
@@ -381,17 +381,17 @@ env.fit
 pdf(file="results/NMDS_soil_fauna_predators_Fig3.pdf", width=10, height=6) 
 par(mfcol=c(1,2), omi=c(0.1, 0.1, 0.1, 0.1), mar=c(4, 4, 1, 1), ps=8) 
 #first plot related to soil variables
-plot(MDS_res$points, t="n",xlab="NMDS1", ylab="NMDS2", xlim=c(-1.7, 1.7)) 
+plot(MDS_res$points, t="n",xlab="NMDS1", ylab="NMDS2", cex.lab=1.5, cex.axis=1.5, xlim=c(-1.7, 1.7)) 
 plot(env.fit, col="gray10", cex=1.2, font=4, labels = c("Tree defoliation", "Litter depth", 
                                                         "Litter mass", "Medium decomposed litter")) 
 text(MDS_res$points, as.character(1:length(MDS_res$points[,1])), cex=1.2, col="red") 
-text(min(MDS_res$points[,1]), max(MDS_res$points[,2]), paste("Stress =",round(MDS_res$stress, 2)), pos=2, font=3, col="gray30") 
+text(min(MDS_res$points[,1]+0.3), max(MDS_res$points[,2]-0.05), paste("Stress =",round(MDS_res$stress, 2)), pos=2, font=3, cex=1.5, col="gray30") 
 
 #second plot related to soil fauna groups
-plot(MDS_res$points, t="n",xlab="NMDS1", ylab="NMDS2", xlim=c(-1.7, 1.7)) 
+plot(MDS_res$points, t="n",xlab="NMDS1", ylab="NMDS2", cex.lab=1.5, cex.axis=1.5, xlim=c(-1.7, 1.7)) 
 plot(bio.fit, col="gray10", cex=1.2, font=4, labels="Prostigmata") 
 text(MDS_res$points, as.character(1:length(MDS_res$points[,1])), cex=1.2, col="red") 
-text(min(MDS_res$points[,1]), max(MDS_res$points[,2]), paste("Stress =",round(MDS_res$stress, 2)), pos=2, font=3, col="gray30") 
+text(min(MDS_res$points[,1]+0.3), max(MDS_res$points[,2]-0.05), paste("Stress =",round(MDS_res$stress, 2)), pos=2, font=3, cex=1.5, col="gray30") 
 dev.off()
 
 
@@ -423,7 +423,7 @@ env <- env[-5, ] # to remove an outlier because the humidity level is to high
 #obtain species (sp) separated from environmental variables (env)
 sp <- d[,27:45]
 # focus on those groups that are related to litter decomposition and nutrient cycling processes
-sp2<- sp[,c(1:10, 14:16, 18, 19)]
+sp2<- sp[,c(1:10, 12, 14:15, 18, 19)]
 
 sp2 <- sp2[-5, ]
 
@@ -449,6 +449,7 @@ abundance_oribatida <- decomp[,1]
 abundance_entomobryomorpha <- decomp[,3]
 abundance_poduromorpha <- decomp[,5]
 abundance_miryapoda <- decomp[,8]
+abundance_diptera <- decomp[,7]
 abundance_mesostigmata <-predators[, 1]
 abundance_prostigmata <-predators[, 2]
 abundance_predator_mites <- apply(predators[,1:2], 1, FUN = "sum")
