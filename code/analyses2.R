@@ -456,7 +456,7 @@ abundance_predator_mites <- apply(predators[,1:2], 1, FUN = "sum")
 
 
 semd <-cbind(env, abundance_decomp, 
-             abundance_predators, abundance_oribatida, abundance_entomobryomorpha, abundance_poduromorpha, abundance_miryapoda, abundance_mesostigmata,
+             abundance_predators, abundance_oribatida, abundance_diptera, abundance_entomobryomorpha, abundance_poduromorpha, abundance_miryapoda, abundance_mesostigmata,
              abundance_prostigmata, abundance_predator_mites)
              
 
@@ -477,15 +477,12 @@ abundance_decomp ~ tree_size
 abundance_decomp ~ light_plot
 abundance_decomp ~~ pathogen
 
+
 abundance_predators ~ light_plot
-abundance_predators ~ tree_size
 abundance_predators ~~ pathogen
 
 # correlation
 abundance_predators ~~ abundance_decomp
-light_plot ~~ tree_size
-pathogen ~~ tree_size
-
 
 #latent variables
 
