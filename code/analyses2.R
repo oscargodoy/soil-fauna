@@ -41,8 +41,8 @@ corrgram(env, order=TRUE, lower.panel=panel.conf, upper.panel=panel.pts, text.pa
 res<-bioenv(sp, env=env)
 res
 
-#Eliminate wood and non-id litter
-env <- env[,c(-13, -17)]
+#Eliminate non-id litter
+env <- env[,-13]
 res2<-bioenv(sp, env=env)
 res2
 
@@ -74,7 +74,7 @@ res.bv.step.biobio2  <- bv.step(sp, sp,
                                 prop.selected.var=0.2, 
                                 num.restarts=50, 
                                 output.best=10, 
-                                var.always.include=c(9,12,14,15)) 
+                                var.always.include=c(3,4,5,9,10)) 
 res.bv.step.biobio2 
 
 
@@ -87,7 +87,7 @@ bio.fit
 
 
 #Do the same with the environmental variables, 
-env.fit <- envfit(MDS_res, env[,c(1,5,15)], perm = 999) 
+env.fit <- envfit(MDS_res, env[,c(1,5,16)], perm = 999) 
 env.fit 
 
 #Plot the graphs
@@ -125,8 +125,8 @@ env[7,14] <- log(env[7,14])
 #For analyses eliminate which plot it is, also OLEA because there is not litter in Marrufo forest. 
 env <- env[,c(-1, -13)]
 
-#Eliminate wood and non-id litter and others
-env <- env[,c(-12, -13, -17)]
+#Eliminate non-id litter and others
+env <- env[,c(-12, -13)]
 
 #light plot of samples 21 and 22 have much more light that the others. Therefore que arcsin sqrt transform them to avoid overdispersion in variance
 env[,1]<-asin(sqrt(env[,1]/100))
@@ -221,8 +221,8 @@ env[7,14] <- log(env[7,14]) # do the log as this is the only value in this colum
 #For analyses eliminate which plot it is, also OLEA because there is not litter in Marrufo forest. 
 env <- env[,-12]
 
-#Eliminate wood and non-id litter and others
-env <- env[,c(-12, -13, -17)]
+#Eliminate non-id litter and others
+env <- env[,c(-12, -13)]
 
 #light plot of samples 21 and 22 have much more light that the others. Therefore que arcsin sqrt transform them to avoid overdispersion in variance
 env[,1]<-asin(sqrt(env[,1]/100))
@@ -287,7 +287,7 @@ res.bv.step.biobio2  <- bv.step(decomp, decomp,
                                 prop.selected.var=0.2, 
                                 num.restarts=50, 
                                 output.best=10, 
-                                var.always.include=c(5,7,9)) # these are the groups that were included in the frist random run of bv.step analyses. 
+                                var.always.include=c(7,8,9)) # these are the groups that were included in the frist random run of bv.step analyses. 
 res.bv.step.biobio2 
 
 
@@ -300,7 +300,7 @@ bio.fit
 
 
 #Do the same with the environmental variables, 
-env.fit <- envfit(MDS_res, env[,c(1,3, 5,14)], perm = 999) 
+env.fit <- envfit(MDS_res, env[,c(1,3,5,15)], perm = 999) 
 env.fit 
 
 #Plot the graphs
@@ -308,7 +308,7 @@ pdf(file="results/NMDS_soil_fauna_decomposers_Fig2.pdf", width=10, height=6)
 par(mfcol=c(1,2), omi=c(0.1, 0.1, 0.1, 0.1), mar=c(4, 4, 1, 1), ps=8) 
 #first plot related to soil variables
 plot(MDS_res$points, t="n",xlab="NMDS1", ylab="NMDS2", cex.lab=1.5, cex.axis=1.5, xlim=c(-1.1, 1.1), ylim = c(-0.6,0.6)) 
-plot(env.fit, col="gray10", cex=1.2, font=4,  labels = c("Light availability", "Soil respiration", "Tree defoliation", "High decomposed litter")) 
+plot(env.fit, col="gray10", cex=1.2, font=4,  labels = c("Light availability", "Soil respiration", "Tree defoliation", "Wood")) 
 text(MDS_res$points, as.character(1:length(MDS_res$points[,1])), cex=1.2, col="red") 
 text(min(MDS_res$points[,1]) , max(MDS_res$points[,2]-0.10), paste("Stress =",round(MDS_res$stress, 2)), pos=1, font=3, cex=1.5, col="gray30") 
 
@@ -361,7 +361,7 @@ res.bv.step.biobio2  <- bv.step(predators, predators,
                                 prop.selected.var=0.2, 
                                 num.restarts=50, 
                                 output.best=10, 
-                                var.always.include=c(2)) 
+                                var.always.include=c(1,2,4)) 
 res.bv.step.biobio2 
 
 
@@ -374,7 +374,7 @@ bio.fit
 
 
 #Do the same with the environmental variables, 
-env.fit <- envfit(MDS_res, env2[,c(5,7,9,13)], perm = 999)  
+env.fit <- envfit(MDS_res, env2[,c(7,15,16)], perm = 999)  
 env.fit 
 
 #Plot the graphs
@@ -382,16 +382,15 @@ pdf(file="results/NMDS_soil_fauna_predators_Fig3.pdf", width=10, height=6)
 par(mfcol=c(1,2), omi=c(0.1, 0.1, 0.1, 0.1), mar=c(4, 4, 1, 1), ps=8) 
 #first plot related to soil variables
 plot(MDS_res$points, t="n",xlab="NMDS1", ylab="NMDS2", cex.lab=1.5, cex.axis=1.5, xlim=c(-1.7, 1.7)) 
-plot(env.fit, col="gray10", cex=1.2, font=4, labels = c("Tree defoliation", "Litter depth", 
-                                                        "Litter mass", "Medium decomposed litter")) 
+plot(env.fit, col="gray10", cex=1.2, font=4, labels = c("Litter mass", "Wood mass", "Litter depth")) 
 text(MDS_res$points, as.character(1:length(MDS_res$points[,1])), cex=1.2, col="red") 
-text(min(MDS_res$points[,1]+0.3), max(MDS_res$points[,2]-0.05), paste("Stress =",round(MDS_res$stress, 2)), pos=2, font=3, cex=1.5, col="gray30") 
+text(min(MDS_res$points[,1]+0.3), max(MDS_res$points[,2]), paste("Stress =",round(MDS_res$stress, 2)), pos=2, font=3, cex=1.5, col="gray30") 
 
 #second plot related to soil fauna groups
 plot(MDS_res$points, t="n",xlab="NMDS1", ylab="NMDS2", cex.lab=1.5, cex.axis=1.5, xlim=c(-1.7, 1.7)) 
-plot(bio.fit, col="gray10", cex=1.2, font=4, labels="Prostigmata") 
+plot(bio.fit, col="gray10", cex=1.2, font=4, labels=c("Prostigmata", "Mesostigmata", "Pseudoscorpionida"))
 text(MDS_res$points, as.character(1:length(MDS_res$points[,1])), cex=1.2, col="red") 
-text(min(MDS_res$points[,1]+0.3), max(MDS_res$points[,2]-0.05), paste("Stress =",round(MDS_res$stress, 2)), pos=2, font=3, cex=1.5, col="gray30") 
+text(min(MDS_res$points[,1]+0.3), max(MDS_res$points[,2]), paste("Stress =",round(MDS_res$stress, 2)), pos=2, font=3, cex=1.5, col="gray30") 
 dev.off()
 
 
@@ -412,7 +411,7 @@ env[7,14] <- log(env[7,14]) # do the log as this is the only value in this colum
 env <- env[,-12]
 
 #Eliminate wood and non-id litter and others
-env <- env[,c(-12, -13, -17)]
+env <- env[,c(-12, -13)]
 
 #light plot of samples 21 and 22 have much more light that the others. Therefore que arcsin sqrt transform them to avoid overdispersion in variance
 env[,1]<-asin(sqrt(env[,1]/100))
@@ -477,9 +476,11 @@ abundance_decomp ~ tree_size
 abundance_decomp ~ light_plot
 abundance_decomp ~~ pathogen
 
+litter_mass ~ tree_size
 
 abundance_predators ~ light_plot
 abundance_predators ~~ pathogen
+abundance_predators ~ litter_mass
 
 # correlation
 abundance_predators ~~ abundance_decomp
@@ -495,6 +496,7 @@ summary(fit, standardized=TRUE)
 #this function is to obtain the fit form the model see http://lavaan.ugent.be/tutorial/tutorial.pdf
 fitMeasures(fit, c("cfi","rmsea","srmr", "pvalue"))
 
+library(corrgram)
 corrgram(semd[,1:16], order=TRUE, lower.panel=panel.conf, upper.panel=panel.pts, text.panel=panel.txt,
          diag.panel=panel.density, pch=16, lty=1, main="Environmental correlations")
 
